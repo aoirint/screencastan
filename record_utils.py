@@ -44,15 +44,13 @@ def record(
     # https://nyanshiba.com/blog/obs-studio#h264_nvenc
     cvargs = '-c:v h264_nvenc -preset:v p7 -profile:v high -rc:v vbr -rc-lookahead 1 -spatial-aq 0 -temporal-aq 1 -cq 23 -weighted_pred 0 -coder cabac -b_ref_mode 2 -dpb_size 4 -multipass 0 -g 120 -bf 2 -pix_fmt yuv420p -color_range tv -color_primaries bt709 -color_trc bt709 -colorspace bt709 -movflags +faststart'
 
-    cvargs = [
-      '-framerate',
-      framerate_str,
-      *(cvargs.split(' ')),
-    ]
+    cvargs = cvargs.split(' ')
 
     vargs = [
       '-f',
       'x11grab',
+      '-framerate',
+      framerate_str,
       '-video_size',
       video_size_str,
       '-window_id',
