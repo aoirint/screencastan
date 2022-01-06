@@ -143,6 +143,8 @@ def record(
       *caargs,
       *fargs,
       *margs,
+      '-ac',
+      '2',
       '-movflags',
       '+faststart',
       '-shortest',
