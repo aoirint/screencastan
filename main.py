@@ -47,6 +47,6 @@ with record(
       raise Exception('Error in recording')
     time.sleep(0.01)
 
-  seconds = 20
+  seconds = 10
   print(f'Wait {seconds} seconds')
   time.sleep(seconds)

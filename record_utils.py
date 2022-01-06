@@ -146,6 +146,8 @@ def record(
       '-movflags',
       '+faststart',
       '-shortest',
+      '-fflags',
+      '+shortest',
       output_path,
     ]
 
