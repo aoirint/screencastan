@@ -106,10 +106,10 @@ def record(
       ]
 
       audio_filter_list = " ".join([ f"[{1+track_index}:a] aresample=async=1 [r{1+track_index}];" for track_index in range(len(audio_tracks)) ])
-      audio_merge_list = "".join([ f"[{1+track_index}]" for track_index in range(len(audio_tracks)) ]) # [1][2]
+      audio_merge_list = "".join([ f"[{1+track_index}:a]" for track_index in range(len(audio_tracks)) ]) # [1][2]
       fargs += [
         '-filter_complex',
-        f'{audio_filter_list} {audio_merge_list} amerge=inputs={len(audio_tracks)} [m]',
+        f'{audio_filter_list} {audio_merge_list} amerge=inputs={len(audio_tracks)},aresample=async=1 [m]',
       ]
 
     margs = []
