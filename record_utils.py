@@ -69,6 +69,8 @@ def record(
     ]
 
     aargs = []
+    has_audio = len(audio_tracks) > 0
+
     for track_index, track in enumerate(audio_tracks):
       aargs += [
         '-f',
@@ -78,31 +80,37 @@ def record(
         '-i',
         track.source_name,
       ]
-    caargs = [
-      '-acodec',
-      'aac',
-      # '-af',
-      # 'aresample=async=1', # https://trac.ffmpeg.org/ticket/4203
-    ]
 
-    # audio_filter_list = " ".join([ f"[{1+track_index}:a] aresample=async=1 [r{1+track_index}];" for track_index in range(len(audio_tracks)) ])
-    audio_merge_list = "".join([ f"[{1+track_index}]" for track_index in range(len(audio_tracks)) ]) # [1][2]
-    fargs = [
-      '-filter_complex',
-      f'{audio_merge_list} amerge=inputs={len(audio_tracks)} [m]',
-    ]
+    caargs = []
+    fargs = []
+    if has_audio:
+      caargs += [
+        '-acodec',
+        'aac',
+        # '-af',
+        # 'aresample=async=1', # https://trac.ffmpeg.org/ticket/4203
+      ]
+
+      # audio_filter_list = " ".join([ f"[{1+track_index}:a] aresample=async=1 [r{1+track_index}];" for track_index in range(len(audio_tracks)) ])
+      audio_merge_list = "".join([ f"[{1+track_index}]" for track_index in range(len(audio_tracks)) ]) # [1][2]
+      fargs += [
+        '-filter_complex',
+        f'{audio_merge_list} amerge=inputs={len(audio_tracks)} [m]',
+      ]
 
     margs = []
     margs += [
       '-map',
       '0:v:0',
     ]
-    margs += [
-      '-map',
-      f'[m]:a',
-      f'-metadata:s:a:0',
-      f'title=All Audio',
-    ]
+
+    if has_audio:
+      margs += [
+        '-map',
+        f'[m]:a',
+        f'-metadata:s:a:0',
+        f'title=All Audio',
+      ]
     for track_index, track in enumerate(audio_tracks):
       margs += [
         '-map',
