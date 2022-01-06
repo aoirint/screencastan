@@ -43,6 +43,8 @@ with record(
   output_path='output.mkv',
 ) as recording:
   while not recording.is_recording:
+    if not recording.is_alive:
+      raise Exception('Error in recording')
     time.sleep(0.01)
 
   print('Wait 5 seconds')
