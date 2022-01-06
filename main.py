@@ -42,4 +42,8 @@ with record(
   audio_tracks=audio_tracks,
   output_path='output.mkv',
 ) as recording:
-  time.sleep(20)
+  while not recording.is_recording:
+    time.sleep(0.01)
+
+  print('Wait 5 seconds')
+  time.sleep(5)

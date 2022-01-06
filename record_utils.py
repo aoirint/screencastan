@@ -11,6 +11,7 @@ from typing import (
 @dataclass
 class RecordingContext:
   is_alive: bool = True
+  is_recording: bool = False
   proc: subprocess.Popen = None
   thread: threading.Thread = None
 
@@ -115,20 +116,34 @@ def record(
     ]
 
     import sys
-    proc = subprocess.Popen(args=args, stderr=sys.stderr)
+    proc = subprocess.Popen(args=args, stderr=subprocess.PIPE)
 
     context = RecordingContext()
     context.proc = proc
 
     def on_process_closed():
+      context.is_recording = False
       context.is_alive = False
       print('Recording process closed')
+
+    def on_recording_started():
+      context.is_recording = True
+      print('Recording started')
 
     def watch_process():
       while True:
         if proc.poll() is not None:
           on_process_closed()
           break
+
+        # Block until process closed
+        for line_bytes in proc.stderr:
+          line = line_bytes.decode('utf-8').strip()
+
+          if line == 'Press [q] to stop, [?] for help':
+            on_recording_started()
+
+          print(line, file=sys.stderr)
 
         time.sleep(0.01)
 
