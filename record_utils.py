@@ -77,6 +77,8 @@ def record(
         'pulse',
         '-thread_queue_size',
         '1024',
+        '-use_wallclock_as_timestamps',
+        '1',
         '-i',
         track.source_name,
       ]
@@ -91,11 +93,11 @@ def record(
         # 'aresample=async=1', # https://trac.ffmpeg.org/ticket/4203
       ]
 
-      # audio_filter_list = " ".join([ f"[{1+track_index}:a] aresample=async=1 [r{1+track_index}];" for track_index in range(len(audio_tracks)) ])
+      audio_filter_list = " ".join([ f"[{1+track_index}:a] aresample=async=1 [r{1+track_index}];" for track_index in range(len(audio_tracks)) ])
       audio_merge_list = "".join([ f"[{1+track_index}]" for track_index in range(len(audio_tracks)) ]) # [1][2]
       fargs += [
         '-filter_complex',
-        f'{audio_merge_list} amerge=inputs={len(audio_tracks)} [m]',
+        f'{audio_filter_list} {audio_merge_list} amerge=inputs={len(audio_tracks)} [m]',
       ]
 
     margs = []
@@ -114,7 +116,8 @@ def record(
     for track_index, track in enumerate(audio_tracks):
       margs += [
         '-map',
-        f'{1+track_index}:a',
+        # f'{1+track_index}:a',
+        f'[r{1+track_index}]',
         f'-metadata:s:a:{1+track_index}',
         f'title={track.track_name}',
       ]
@@ -128,6 +131,8 @@ def record(
       *caargs,
       *fargs,
       *margs,
+      '-vsync',
+      '0',
       output_path,
     ]
 
