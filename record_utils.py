@@ -42,7 +42,9 @@ def record(
     # cvargs = '-c:v hevc_nvenc -preset:v p7 -profile:v main10 -rc:v constqp -rc-lookahead 1 -spatial-aq 0 -temporal-aq 1 -weighted_pred 0 -init_qpI 21 -init_qpP 21 -init_qpB 24 -b_ref_mode 1 -dpb_size 4 -multipass 2 -g 60 -bf 3 -pix_fmt yuv420p10le -color_range tv -color_primaries bt709 -color_trc bt709 -colorspace bt709 -movflags +faststart'
 
     # https://nyanshiba.com/blog/obs-studio#h264_nvenc
-    cvargs = '-c:v h264_nvenc -preset:v p7 -profile:v high -rc:v vbr -rc-lookahead 1 -spatial-aq 0 -temporal-aq 1 -cq 23 -weighted_pred 0 -coder cabac -b_ref_mode 2 -dpb_size 4 -multipass 0 -g 120 -bf 2 -pix_fmt yuv420p -color_range tv -color_primaries bt709 -color_trc bt709 -colorspace bt709 -movflags +faststart'
+    # cvargs = '-c:v h264_nvenc -preset:v p7 -profile:v high -rc:v vbr -rc-lookahead 1 -spatial-aq 0 -temporal-aq 1 -cq 23 -weighted_pred 0 -coder cabac -b_ref_mode 2 -dpb_size 4 -multipass 0 -g 120 -bf 2 -pix_fmt yuv420p -color_range tv -color_primaries bt709 -color_trc bt709 -colorspace bt709 -movflags +faststart'
+    # cvargs = '-c:v h264_nvenc -preset:v p6 -profile:v high -rc:v vbr -rc-lookahead 1 -spatial-aq 0 -temporal-aq 1 -cq 23 -weighted_pred 0 -coder cabac -b_ref_mode 2 -dpb_size 4 -multipass 0 -g 120 -bf 2 -pix_fmt yuv420p -color_range tv -color_primaries bt709 -color_trc bt709 -colorspace bt709 -movflags +faststart'
+    cvargs = '-c:v h264_nvenc -preset:v p6 -profile:v high -rc:v cbr -b:v 2500K -rc-lookahead 1 -spatial-aq 0 -temporal-aq 1 -cq 23 -weighted_pred 0 -coder cabac -b_ref_mode 2 -dpb_size 4 -multipass 0 -g 120 -bf 2 -pix_fmt yuv420p -color_range tv -color_primaries bt709 -color_trc bt709 -colorspace bt709 -movflags +faststart'
 
     cvargs = cvargs.split(' ')
 
@@ -70,11 +72,15 @@ def record(
     caargs = [
       '-acodec',
       'aac',
+      # '-af',
+      # 'aresample=async=1', # https://trac.ffmpeg.org/ticket/4203
     ]
 
+    # audio_filter_list = " ".join([ f"[{1+track_index}] aresample=async=1" for track_index in range(len(audio_tracks)) ]) # [1][2]
+    audio_merge_list = "".join([ f"[{1+track_index}]" for track_index in range(len(audio_tracks)) ]) # [1][2]
     fargs = [
       '-filter_complex',
-      f'{"".join([ f"[{1+track_index}]" for track_index in range(len(audio_tracks)) ])} amerge=inputs={len(audio_tracks)} [m]',
+      f'{audio_merge_list} amerge=inputs={len(audio_tracks)} [m]',
     ]
 
     margs = []
