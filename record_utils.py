@@ -54,6 +54,8 @@ def record(
       'x11grab',
       '-thread_queue_size',
       '1024',
+      '-use_wallclock_as_timestamps',
+      '1',
       '-framerate',
       framerate_str,
       '-video_size',
