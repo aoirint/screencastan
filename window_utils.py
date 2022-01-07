@@ -6,8 +6,8 @@ from typing import (
 )
 
 class NoActiveWindowError(Exception):
-  def __init__(self, *args):
-    super.__init__(args)
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
 
 def get_active_window_id() -> str:
   args = [
@@ -26,12 +26,12 @@ def get_active_window_id() -> str:
 
 
 class NoSuchWindowError(Exception):
-  def __init__(self, *args):
-    super.__init__(args)
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
 
 class UnsupportedCommandOutputError(Exception):
-  def __init__(self, *args):
-    super.__init__(args)
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
 
 @dataclass
 class WindowGeometry:
@@ -63,9 +63,9 @@ def get_window_geometry(window_id: str) -> WindowGeometry:
     raise UnsupportedCommandOutputError('Number of output lines must be 3.')
 
   position_line = lines[1].strip()
-  position_line_match = re.match(r'^Position:\s*(\d+),(\d+)\s*\(screen:\s*(\d+)\)$', position_line)
+  position_line_match = re.match(r'^Position:\s*(-?\d+),(-?\d+)\s*\(screen:\s*(\d+)\)$', position_line)
   if not position_line_match:
-    raise UnsupportedCommandOutputError('Invalid position line format.')
+    raise UnsupportedCommandOutputError(f'Invalid position line format: {position_line}')
 
   x = int(position_line_match.group(1))
   y = int(position_line_match.group(2))

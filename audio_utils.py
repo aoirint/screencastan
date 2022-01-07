@@ -7,8 +7,8 @@ from typing import (
 )
 
 class InvalidCommandStateError(Exception):
-  def __init__(self, *args):
-    super.__init__(args)
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
 
 @dataclass
 class Sink:
